@@ -38,21 +38,8 @@ class Todoist:
                             get_all_url, 
                             headers=headers,
                             params=params)  
-            return response.json()
-            
+            completed_tasks = response.json()
+            return completed_tasks['tems']
         except Exception as error:
             print(error) 
-
-    def get_task_details(self, task_id):
-        task_details_url = 'https://api.todoist.com/sync/v9/items/get'
-        headers = {'Authorization': 'Bearer {}'.format(self.api_key)}
-        data = {'item_id': task_id}
-
-        try:
-            response = requests.post(task_details_url, headers=headers, data=data)
-            return response
-        except Exception as error:
-            print(error)
-
-    def update_tasks(self):
-        pass 
+            pass 
