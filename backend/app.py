@@ -21,6 +21,12 @@ with open("./data/tasks.p", "rb") as rp:
     task_data = pickle.load(rp)
 
 
+@app.route("/update_tasks")
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+def update_tasks_db():
+    pass
+
+
 @app.route("/most_recent")
 @cross_origin(origin="*", headers=["Content-Type", "Authorization"])
 def return_most_recent_task():
@@ -32,18 +38,21 @@ def return_most_recent_task():
 def return_last_weeks_tasks():
     task_items = task_data['items']
     payload = {"last_weeks_tasks": []}
+    i = 0
     for task in task_items:
         if from_last_week(task):
             dt = iso8601_to_datetime(task['completed_at'])
             weekday = weekday_from_datetime(dt)
-            date = dt.date()
+            date = str(dt.date())
             payload['last_weeks_tasks'].append(
                 {
+                    "id" : i,
                     "date" : date,
                     "weekday" : weekday,
                     "task_content" : task['content']
                 }
             )
+            i += 1
 
     return jsonify(payload)
 
@@ -69,3 +78,7 @@ def weekday_from_datetime(dt):
 def iso8601_to_datetime(isodatetime):
     #TODO: Making the datetime tz-naive might be a problem later...?
     return parser.parse(isodatetime).replace(tzinfo=None)
+
+
+if __name__ == "__main__":
+    app.run(debug=True, port=8080)

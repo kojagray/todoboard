@@ -37,3 +37,4 @@ next-env.d.ts
 
 apikey.txt
 *.p
+__pycache__/
