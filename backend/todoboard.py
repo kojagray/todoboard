@@ -49,6 +49,13 @@ class Todoist:
         except Exception as error:
             print(error) 
 
+    def get_sections(self):
+        try:
+            sections = self.api.get_sections()
+            return sections
+        except Exception as error:
+            print(error)
+
     def get_task_details(self, task_id):
         task_details_url = 'https://api.todoist.com/sync/v9/items/get'
         headers = {'Authorization': 'Bearer {}'.format(self.api_key)}
