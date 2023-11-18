@@ -1,6 +1,6 @@
 import pandas as pd 
 import sqlite3 
-from todoboard import Todoist
+from todoist_api_wrapper import TodoistAPIWrapper
 
 connection = sqlite3.connect("data/todo.db")
 cursor = connection.cursor()
@@ -44,7 +44,7 @@ connection.commit()
 print(f"Executing command: {create_colors_table_cmd}")
 
 # initialize Todoist API wrapper constructor 
-T = Todoist()
+T = TodoistAPIWrapper()
 
 # ingest projects 
 projects = T.get_all_projects()

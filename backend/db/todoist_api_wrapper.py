@@ -1,14 +1,7 @@
 import requests
-from tinydb import TinyDB, Query
-import tqdm
-
 from todoist_api_python.api import TodoistAPI
 
-class TodoDB:
-    def __init__(self):
-        self.db = TinyDB("data/todo_db.json")
-
-class Todoist:
+class TodoistAPIWrapper:
     def __init__(self):
         self.api_key = self._get_api_key()
         self.api = self._init_api()
@@ -66,6 +59,3 @@ class Todoist:
             return response
         except Exception as error:
             print(error)
-
-    def update_tasks(self):
-        pass 
