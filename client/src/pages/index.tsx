@@ -3,36 +3,22 @@ import 'bootstrap/dist/css/bootstrap.css';
 import lastWeek from "../styles/lastWeek.module.css"
 import LastWeekContainer from './LastWeekContainer';
 
-function dayCard(cardHeader: String, cardContents: String[]) {
-  return (
-    <div className="card">
-      <div className="card-block">
-        <h3 className="card-title">{cardHeader}</h3>
-        {
-          cardContents.map((content) => (
-            <p>{content}</p>)
-          )}
-      </div>
-    </div>
-  )
+function updateTasks() {
+  fetch("http://localhost:8080/update_tasks")
+  .then((response) => {
+    console.log(response.json())
+    window.location.reload();
+  })
+
 }
 
 function index() {
-
-  // useEffect(() => {
-  //   fetch("http://localhost:5000/last_weeks_tasks")
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //       console.log(data);
-  //   });
-  //   }, []);
-
   return (
     <>
       <div className={lastWeek.row}>
         {LastWeekContainer()}
       </div>
-      <button>
+      <button onClick={updateTasks}>
         Update Tasks
       </button>
     </>

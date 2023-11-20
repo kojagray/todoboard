@@ -19,6 +19,14 @@ def last_weeks_tasks_endpoint():
     return jsonify(tasks)
 
 
+@app.route("/update_tasks")
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+def update_tasks_endpoint():
+    update_tasks()
+
+    return '', 204
+
+
 if __name__ == "__main__":
     update_tasks()
     app.run(debug=True, port=8080)

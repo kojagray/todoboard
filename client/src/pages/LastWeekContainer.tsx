@@ -16,7 +16,6 @@ function LastWeekContainer() {
         fetch("http://localhost:8080/last_weeks_tasks")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
                 updateLastWeeksTasks(lastWeeksTasks => ({
                     ...lastWeeksTasks, ...data
                 }))
@@ -29,7 +28,7 @@ function LastWeekContainer() {
                 <div className="card-block">
                     <h3 className="card-title">{getDayOfWeek(date)}</h3>
                     {lastWeeksTasks[date as keyof typeof lastWeeksTasks].map((task: any) =>
-                        <div className="card-text">{task.content}</div>
+                        <li style={{color : task.color}}>{task.content}</li>
                     )}
                 </div>
             </div>

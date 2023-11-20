@@ -22,6 +22,7 @@ def last_weeks_tasks():
     for task in tasks:
         local_completed_time = utc_to_local(task['completed_at'])
         task['local_complete_time'] = local_completed_time
+        task['color'] = get_hex_from_color_name(get_project_info(task['project_id'])['color'])
         date_completed = iso8601_datetime_string_to_date(local_completed_time)
         if date_completed in last_weeks_tasks:
             last_weeks_tasks[date_completed].append(task)
@@ -61,19 +62,14 @@ def update_tasks():
     connection.close()
 
 
-def get_project_info(task_id):
+def get_project_info(project_id):
     connection = create_connection()
     cursor = connection.cursor()
-    q = "SELECT * from tasks WHERE id = ?"
-    cursor.execute(q, (task_id,))
-    task = cursor.fetchone()
-    project_id = task[2]
-
     q = "SELECT * from projects where id = ?"
     cursor.execute(q, (project_id,))
     project = cursor.fetchone()
     
-    return project
+    return sql_fetch_to_dict(project, cursor)
 
 
 def get_hex_from_color_name(color_name):
