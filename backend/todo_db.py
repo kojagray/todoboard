@@ -1,15 +1,32 @@
+from datetime import datetime, date, timedelta
+from dateutil import parser, tz
 import sqlite3
+
 from todoist_api_wrapper import TodoistAPIWrapper
+
+ISO8601_UTC_STRF = '%Y-%m-%dT%H:%M:%S.%fZ'
+ISO8601_LOCAL_STRF = '%Y-%m-%dT%H:%M:%S.%f'
+ISO_DATE_STRF = '%Y-%m-%d'
 
 DB_FP = "./todo.db"
 
 
-def create_connection():
-    try:
-        connection = sqlite3.connect(DB_FP)
-        return connection
-    except Error as e:
-        print(e)
+def last_weeks_tasks():
+    connection = create_connection()
+    cursor = connection.cursor()
+    q = f"SELECT * from tasks WHERE strftime(\"{ISO8601_UTC_STRF}\", completed_at) > (SELECT DATETIME('now', '-7 day'))"
+    cursor.execute(q)
+    tasks = [sql_fetch_to_dict(task, cursor) for task in cursor.fetchall()]
+
+    last_weeks_tasks = generate_last_week_map()
+    for task in tasks:
+        local_completed_time = utc_to_local(task['completed_at'])
+        task['local_complete_time'] = local_completed_time
+        date_completed = iso8601_datetime_string_to_date(local_completed_time)
+        if date_completed in last_weeks_tasks:
+            last_weeks_tasks[date_completed].append(task)
+
+    return last_weeks_tasks
 
 
 def update_tasks():
@@ -66,16 +83,51 @@ def get_hex_from_color_name(color_name):
     cursor.execute(q, (color_name,))
     hexa = cursor.fetchone()
     
-    return hexa[0] 
+    return hexa[0]
 
 
-if __name__ == "__main__":
-    task_id = "6813766296"
-    project = get_project_info(task_id)
-    print(project)
-    hexa = get_hex_from_color_name(project[2])
-    print(hexa)
+def create_connection():
+    try:
+        connection = sqlite3.connect(DB_FP)
+        return connection
+    except Error as e:
+        print(e)
 
 
-
+def generate_last_week_map():
+    today = date.today()
+    last_week_map = {}
+    for i in range(7):
+        day = today - timedelta(days=i)
+        iso = day.isoformat()
+        last_week_map[iso] = []
     
+    return last_week_map
+
+
+def iso8601_datetime_string_to_date(dtstring):
+    return dtstring.split("T")[0]
+
+
+def sql_fetch_to_dict(qrow, cursor):
+    '''
+    Converts sql query tuples into dictionary with row headers as keys
+    '''
+    headers = [x[0] for x in cursor.description]
+    
+    qdict = {}
+    for i, header in enumerate(headers):
+        qdict[header] = qrow[i]
+
+    return qdict
+
+
+def utc_to_local(iso_utc_string):
+    from_zone = tz.tzutc()
+    to_zone = tz.tzlocal()
+    utc = datetime.strptime(iso_utc_string, ISO8601_UTC_STRF)
+    utc = utc.replace(tzinfo=from_zone)
+    local_dt = utc.astimezone(to_zone)
+    iso_local_string = local_dt.strftime(ISO8601_LOCAL_STRF)
+
+    return iso_local_string
