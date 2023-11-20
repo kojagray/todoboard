@@ -39,3 +39,4 @@ apikey.txt
 *.p
 __pycache__/
 *.ipynb
+*.db
