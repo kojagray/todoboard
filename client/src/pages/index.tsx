@@ -9,7 +9,6 @@ function updateTasks() {
     console.log(response.json())
     window.location.reload();
   })
-
 }
 
 function index() {
@@ -18,7 +17,7 @@ function index() {
       <div className={lastWeek.row}>
         {LastWeekContainer()}
       </div>
-      <button onClick={updateTasks}>
+      <button type="button" className="btn btn-primary btn-med" onClick={updateTasks}>
         Update Tasks
       </button>
     </>
