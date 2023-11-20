@@ -1,27 +1,42 @@
 import React, { useEffect, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.css';
+import lastWeek from "../styles/lastWeek.module.css"
+import LastWeekContainer from './LastWeekContainer';
 
-function index() {
-  let [lastWeeksTasks, updateLastWeeksTasks] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:8080/last_week")
-    .then((response) => response.json())
-    .then((data) => {
-      // console.log(data);
-      updateLastWeeksTasks(data['last_weeks_tasks']);
-    });
-  }, []);
-
+function dayCard(cardHeader: String, cardContents: String[]) {
   return (
-    lastWeeksTasks.map((task) => 
-      <li key={task['id']} className = "py-2">
-        <p className = "content-center">{task['date']}</p>
-        <p>{task['weekday']}</p>
-        <p>{task['task_content']}</p>
-      </li>
-    )
-
+    <div className="card">
+      <div className="card-block">
+        <h3 className="card-title">{cardHeader}</h3>
+        {
+          cardContents.map((content) => (
+            <p>{content}</p>)
+          )}
+      </div>
+    </div>
   )
 }
 
-export default index
+function index() {
+
+  // useEffect(() => {
+  //   fetch("http://localhost:5000/last_weeks_tasks")
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //       console.log(data);
+  //   });
+  //   }, []);
+
+  return (
+    <>
+      <div className={lastWeek.row}>
+        {LastWeekContainer()}
+      </div>
+      <button>
+        Update Tasks
+      </button>
+    </>
+  );
+}
+
+export default index;
