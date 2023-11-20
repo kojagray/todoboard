@@ -3,6 +3,7 @@ from todoist_api_wrapper import TodoistAPIWrapper
 
 DB_FP = "./todo.db"
 
+
 def create_connection():
     try:
         connection = sqlite3.connect(DB_FP)
@@ -40,11 +41,40 @@ def update_tasks():
     cursor.executemany("INSERT into tasks values (?, ?, ?, ?, ?)", task_ingest_cmds)
     connection.commit()
     print(f"{len(task_ingest_cmds)} tasks added!")
+    connection.close()
+
+
+def get_project_info(task_id):
+    connection = create_connection()
+    cursor = connection.cursor()
+    q = "SELECT * from tasks WHERE id = ?"
+    cursor.execute(q, (task_id,))
+    task = cursor.fetchone()
+    project_id = task[2]
+
+    q = "SELECT * from projects where id = ?"
+    cursor.execute(q, (project_id,))
+    project = cursor.fetchone()
+    
+    return project
+
+
+def get_hex_from_color_name(color_name):
+    connection = create_connection()
+    cursor = connection.cursor()
+    q = "SELECT hexadecimal from colors WHERE name = ?"
+    cursor.execute(q, (color_name,))
+    hexa = cursor.fetchone()
+    
+    return hexa[0] 
 
 
 if __name__ == "__main__":
-    update_tasks()
-
+    task_id = "6813766296"
+    project = get_project_info(task_id)
+    print(project)
+    hexa = get_hex_from_color_name(project[2])
+    print(hexa)
 
 
 
