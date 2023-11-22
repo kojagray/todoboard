@@ -28,7 +28,7 @@ function LastWeekContainer() {
                 <div className="card-block">
                     <h3 className="card-title">{getDayOfWeek(date)}</h3>
                     {lastWeeksTasks[date as keyof typeof lastWeeksTasks].map((task: any) =>
-                        <li style={{color : task.color}}>{task.content}</li>
+                        <li style={{backgroundColor : task.color}}>{task.content}</li>
                     )}
                 </div>
             </div>
