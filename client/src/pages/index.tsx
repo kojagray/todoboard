@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import lastWeek from "../styles/lastWeek.module.css"
 import LastWeekContainer from './LastWeekContainer';
+import CalendarContainer from './CalendarContainer';
 
 function updateTasks() {
   fetch("http://localhost:8080/update_tasks")
@@ -20,6 +21,7 @@ function index() {
       <button type="button" className="btn btn-primary btn-med" onClick={updateTasks}>
         Update Tasks
       </button>
+      <CalendarContainer />
     </>
   );
 }

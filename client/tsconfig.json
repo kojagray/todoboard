@@ -18,5 +18,9 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "paths": {
+    "react": [ "./node_modules/@types/react", "node_modules/@types/*" ]
+  },
+  "resolutions": { "@types/react": "~17.0.21" }
 }
