@@ -1,39 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from 'react-github-contribution-calendar';
+
 
 function getCurrentDate() {
   let t = new Date();
   let dateString = `${t.getFullYear()}-${t.getMonth()}-${t.getDate()}`
-  
+
   return dateString;
 }
 
+
+
+
 function CalendarContainer() {
-    var values = {
-        '2023-06-23': 1,
-        '2023-06-26': 2,
-        '2023-06-27': 3,
-        '2023-06-28': 4,
-        '2023-06-29': 4
-      };
-    var until = getCurrentDate();
-    var panelAttributes = { 'rx': 0, 'ry': 0 };
-    var weekLabelAttributes = {
+  let [allTasksCounter, updateAllTasksCounter] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/all_tasks_date_counter")
+      .then((response) => response.json())
+      .then((data) => {
+        updateAllTasksCounter(allTasksCounter => ({
+          ...allTasksCounter, ...data
+        }))
+      });
+  }, []);
+  console.log(allTasksCounter) // replace these guys with actual data 
+  let until = getCurrentDate();
+  let panelAttributes = { 'rx': 0, 'ry': 0 };
+  let weekLabelAttributes = {
     'rotate': 0
-    };
-    var monthLabelAttributes = {
+  };
+  let monthLabelAttributes = {
     'style': {
-        'text-decoration': 'underline',
-        'font-size': 10,
-        'alignment-baseline': 'central',
-        'fill': '#000000'
+      'text-decoration': 'underline',
+      'font-size': 10,
+      'alignment-baseline': 'central',
+      'fill': '#000000'
     }
-    };
-  getCurrentDate();
+  };
   return (
-    <Calendar 
-      values={values} 
-      until={until}     
+    <Calendar
+      values={allTasksCounter}
+      until={until}
       panelAttributes={panelAttributes}
       weekLabelAttributes={weekLabelAttributes}
       monthLabelAttributes={monthLabelAttributes}

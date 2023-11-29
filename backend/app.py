@@ -3,12 +3,30 @@ from flask_cors import CORS, cross_origin
 
 from todo_db import (
     last_weeks_tasks, 
-    update_tasks
+    update_tasks,
+    get_all_tasks,
+    generate_all_tasks_counter
 )
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
+
+@app.route("/all_tasks_date_counter")
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+def all_tasks_date_counter_endpoint():
+    tasks = get_all_tasks()
+    tasks_counter = generate_all_tasks_counter(tasks)
+    print(tasks_counter)
+
+    return jsonify(tasks_counter)
+
+@app.route("/all_tasks")
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+def all_tasks_endpoint():
+    tasks = get_all_tasks()
+
+    return jsonify({"all_tasks" : tasks})
 
 
 @app.route("/last_weeks_tasks")

@@ -11,6 +11,20 @@ ISO_DATE_STRF = '%Y-%m-%d'
 DB_FP = "./todo.db"
 
 
+def get_all_tasks():
+    connection = create_connection()
+    cursor = connection.cursor()
+    q = f"SELECT * from tasks"
+    cursor.execute(q)
+    tasks = [sql_fetch_to_dict(task, cursor) for task in cursor.fetchall()]
+    for task in tasks:
+        local_completed_time = utc_to_local(task['completed_at'])
+        task['local_complete_time'] = local_completed_time
+        task['color'] = get_hex_from_color_name(get_project_info(task['project_id'])['color'])
+
+    return tasks
+
+
 def last_weeks_tasks():
     connection = create_connection()
     cursor = connection.cursor()
@@ -21,7 +35,7 @@ def last_weeks_tasks():
     last_weeks_tasks = generate_last_week_map()
     for task in tasks:
         local_completed_time = utc_to_local(task['completed_at'])
-        task['local_complete_time'] = local_completed_time
+        task['local_complete_time'] = local_completed_time #TODO: maybe we should make this attr into a migration
         task['color'] = get_hex_from_color_name(get_project_info(task['project_id'])['color'])
         date_completed = iso8601_datetime_string_to_date(local_completed_time)
         if date_completed in last_weeks_tasks:
@@ -89,6 +103,16 @@ def create_connection():
     except Error as e:
         print(e)
 
+
+def generate_all_tasks_counter(tasks):
+    dates = {}
+    for task in tasks:
+        date = iso8601_datetime_string_to_date(task['completed_at'])
+        if date not in dates:
+            dates[date] = 0
+        dates[date] += 1
+        
+    return dates
 
 def generate_last_week_map():
     today = date.today()
