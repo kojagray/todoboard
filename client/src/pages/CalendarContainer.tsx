@@ -24,7 +24,6 @@ function CalendarContainer() {
         }))
       });
   }, []);
-  console.log(allTasksCounter) // replace these guys with actual data 
   let until = getCurrentDate();
   let panelAttributes = { 'rx': 0, 'ry': 0 };
   let weekLabelAttributes = {
