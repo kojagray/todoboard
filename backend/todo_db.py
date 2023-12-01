@@ -24,6 +24,15 @@ def get_all_tasks():
 
     return tasks
 
+def get_all_projects():
+    connection = create_connection()
+    cursor = connection.cursor()
+    q = f"SELECT * from projects"
+    cursor.execute(q)
+    projects = [sql_fetch_to_dict(p, cursor) for p in cursor.fetchall()]
+
+    return projects
+
 
 def last_weeks_tasks():
     connection = create_connection()
@@ -42,6 +51,11 @@ def last_weeks_tasks():
             last_weeks_tasks[date_completed].append(task)
 
     return last_weeks_tasks
+
+
+def update_projects():
+    '''Not yet implemented.'''
+    pass
 
 
 def update_tasks():
@@ -151,3 +165,21 @@ def utc_to_local(iso_utc_string):
     iso_local_string = local_dt.strftime(ISO8601_LOCAL_STRF)
 
     return iso_local_string
+
+if __name__=="__main__":
+    # tasks = get_all_tasks()
+    # for task in tasks:
+    #     project_info = get_project_info(task['project_id'])
+    #     print(project_info)
+    #     break
+
+    projects = get_all_projects()
+    project_map = {p['id'] : [] for p in projects}
+    tasks = get_all_tasks()
+    for task in tasks:
+        project_map[task['project_id']].append(task)
+
+    project_map = {
+        pid : generate_all_tasks_counter(tasks)
+        for pid, tasks in project_map.items()
+    }
