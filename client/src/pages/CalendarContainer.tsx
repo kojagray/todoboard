@@ -37,6 +37,41 @@ function generateCalendar(projectData: ProjectData) {
   );
 }
 
+function colorSpacer(hex : string, spacer=15){
+  const rgb = hex.slice(1)
+  const r = rgb.slice(0,2)
+  const g = rgb.slice(2,4)
+  const b = rgb.slice(4,6)
+
+  const rval = parseInt(r, 16)
+  const gval = parseInt(g, 16)
+  const bval = parseInt(b, 16)
+
+  let panelColors = []
+  for (let i = -2; i <= 2; i++){
+    let currR = leftPadWithZeros(boundColor(rval + i*spacer).toString(16))
+    let currG = leftPadWithZeros(boundColor(gval + i*spacer).toString(16))
+    let currB = leftPadWithZeros(boundColor(bval + i*spacer).toString(16))
+
+    let panelColor = "#" + currR + currG + currB
+    panelColor = panelColor.toUpperCase()
+    panelColors.push(panelColor)
+  }
+
+  return panelColors
+}
+
+function boundColor(colorInt : number){
+  return Math.max(0, Math.min(colorInt, 255))
+}
+
+function leftPadWithZeros(hex : string){
+  if (hex.length < 2){
+    hex = "0" + hex
+  }
+
+  return hex
+}
 function getCurrentDate() {
   const t = new Date();
   const dateString = `${t.getFullYear()}-${t.getMonth() + 1}-${t.getDate()}`;
