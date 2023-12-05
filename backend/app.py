@@ -7,6 +7,7 @@ from todo_db import (
     get_all_tasks,
     get_all_projects,
     get_project_info,
+    get_hex_from_color_name,
     generate_all_tasks_counter
 )
 
@@ -28,6 +29,7 @@ def per_project_date_counter_endpoint():
     project_map = {
         pid : {
             "project_name" : get_project_info(pid)['name'],
+            'project_color' : get_hex_from_color_name(get_project_info(pid)['color']),
             "counter" : generate_all_tasks_counter(tasks)
         }
         for pid, tasks in project_map.items()

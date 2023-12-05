@@ -5,19 +5,19 @@ type TaskCounter = Record<string, ProjectData>;
 
 type ProjectData = {
   project_name: string;
+  project_color: string;
   counter: Record<string, number>;
 };
 
 function generateCalendar(projectData: ProjectData) {
   const until = getCurrentDate();
-  const panelAttributes = { rx: 0, ry: 0 };
+  const panelAttributes = { rx: 6, ry: 6 };
   const weekLabelAttributes = {
     rotate: 0,
   };
   const monthLabelAttributes = {
     style: {
-      textDecoration: 'underline',
-      fontSize: 10,
+      fontSize: 11,
       alignmentBaseline: 'central',
       fill: '#000000',
     },
@@ -30,6 +30,7 @@ function generateCalendar(projectData: ProjectData) {
         values={projectData.counter}
         until={until}
         panelAttributes={panelAttributes}
+        panelColors={generatePanelColors(projectData.project_color)}
         weekLabelAttributes={weekLabelAttributes}
         monthLabelAttributes={monthLabelAttributes}
       />
@@ -37,7 +38,9 @@ function generateCalendar(projectData: ProjectData) {
   );
 }
 
-function colorSpacer(hex : string, spacer=15){
+function generatePanelColors(hex : string){
+  const cendpt = 242 // grey #EEEEEE is 238, 238, 238
+  
   const rgb = hex.slice(1)
   const r = rgb.slice(0,2)
   const g = rgb.slice(2,4)
@@ -47,18 +50,37 @@ function colorSpacer(hex : string, spacer=15){
   const gval = parseInt(g, 16)
   const bval = parseInt(b, 16)
 
-  let panelColors = []
-  for (let i = -2; i <= 2; i++){
-    let currR = leftPadWithZeros(boundColor(rval + i*spacer).toString(16))
-    let currG = leftPadWithZeros(boundColor(gval + i*spacer).toString(16))
-    let currB = leftPadWithZeros(boundColor(bval + i*spacer).toString(16))
+  const newR = interpColor(rval, cendpt)
+  const newG = interpColor(gval, cendpt)
+  const newB = interpColor(bval, cendpt)
 
-    let panelColor = "#" + currR + currG + currB
-    panelColor = panelColor.toUpperCase()
-    panelColors.push(panelColor)
+  // generate colors from #EEEEEE to $hex 
+  let panelColors = []
+  for (let i = 0; i < 5; i++) {
+    let rhex = leftPadWithZeros(boundColor(newR[i]).toString(16))
+    let ghex = leftPadWithZeros(boundColor(newG[i]).toString(16))
+    let bhex = leftPadWithZeros(boundColor(newB[i]).toString(16)) 
+    let panelColor = "#" + rhex + ghex + bhex
+    panelColors.unshift(panelColor)
   }
 
   return panelColors
+}
+
+function interpColor(colInt : number, cendpt = 238) {
+  let cslice = (cendpt - colInt) / 5
+  let newCol = []
+  if (colInt < cendpt) {
+    for (let i = 1; i <= 5; i++) {
+      newCol.push(Math.floor(colInt + i*cslice))
+    }
+  } else {
+    for (let i = 1; i <= 5; i++){
+      newCol.push(Math.floor(colInt - i*cslice))
+    }
+  }
+  
+  return newCol
 }
 
 function boundColor(colorInt : number){
