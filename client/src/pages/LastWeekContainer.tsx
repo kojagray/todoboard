@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
+import lastWeek from "../styles/lastWeek.module.css"
 
 function getDayOfWeek(date: string) {
     const dayOfWeek = new Date(date + " 00:00:00").getDay();
@@ -24,13 +24,15 @@ function LastWeekContainer() {
 
     return (
         Object.keys(lastWeeksTasks).map((date) =>
-            <div className="card">
-                <div className="card-block">
-                    <h3 className="card-title">{getDayOfWeek(date)}</h3>
-                    {lastWeeksTasks[date as keyof typeof lastWeeksTasks].map((task: any) =>
-                        <li style={{backgroundColor : task.color}}>{task.content}</li>
-                    )}
+            <div className={lastWeek.dayCard}>
+                <div className={lastWeek.dateHeader}>
+                    {getDayOfWeek(date)}
                 </div>
+                {lastWeeksTasks[date as keyof typeof lastWeeksTasks].map((task: any) =>
+                    <div style={{backgroundColor : task.color}} className={lastWeek.taskContent}>
+                        {task.content}
+                    </div>
+                )}
             </div>
         )
     )
